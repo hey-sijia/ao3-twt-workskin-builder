@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AO3 Twitter Workskin Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Design tokens ── */
+  :root {
+    --ink:        #1a1a1a;
+    --ink-2:      #555;
+    --ink-3:      #999;
+    --rule:       #e0ddd8;
+    --paper:      #f7f5f1;
+    --paper-2:    #ffffff;
+    --accent:     #c0392b;
+    --accent-dim: #e8d5d3;
+    --mono:       "DM Mono", monospace;
+    --sans:       "DM Sans", sans-serif;
+    --serif:      "Playfair Display", Georgia, serif;
+    --radius:     6px;
+    --shadow:     0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── Layout ── */
+  .app {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 420px 1fr;
+    grid-template-areas:
+      "header header"
+      "panel  preview";
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    grid-area: header;
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--rule);
+    padding: 16px 28px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+
+  .header__title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .header__sub {
+    font-size: 12px;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Left panel ── */
+  .panel {
+    grid-area: panel;
+    background: var(--paper-2);
+    border-right: 1px solid var(--rule);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Icon settings (collapsible at top) */
+  .icon-settings {
+    border-bottom: 1px solid var(--rule);
+    padding: 0;
+  }
+
+  .icon-settings__toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+
+  .icon-settings__toggle:hover { background: var(--paper); }
+
+  .icon-settings__toggle-arrow {
+    transition: transform 0.2s;
+    font-size: 10px;
+  }
+
+  .icon-settings__toggle-arrow.open { transform: rotate(180deg); }
+
+  .icon-settings__body {
+    display: none;
+    padding: 0 20px 16px;
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .icon-settings__body.open { display: flex; }
+
+  .icon-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+
+  /* Blocks list */
+  .blocks {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 0;
+  }
+
+  .blocks__add {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-add {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--ink-2);
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .btn-add:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Individual block card */
+  .block {
+    margin: 0 16px 10px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .block__head {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--paper);
+    border-bottom: 1px solid transparent;
+    transition: background 0.15s;
+  }
+
+  .block__head:hover { background: #eeece8; }
+
+  .block.open .block__head {
+    border-bottom-color: var(--rule);
+    background: #eeece8;
+  }
+
+  .block__type {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper-2);
+    background: var(--ink-2);
+    border-radius: 3px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+
+  .block__type--main    { background: #1d9bf0; }
+  .block__type--reply   { background: #536471; }
+  .block__type--thread  { background: #2d6a4f; }
+  .block__type--composer{ background: #9b59b6; }
+
+  .block__label {
+    flex: 1;
+    font-size: 13px;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .block__controls {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .block__btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 14px;
+    color: var(--ink-3);
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .block__btn:hover { color: var(--accent); background: var(--accent-dim); }
+
+  .block__body {
+    display: none;
+    padding: 14px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .block.open .block__body { display: flex; }
+
+  /* Thread sub-blocks */
+  .thread-replies {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 0 4px;
+  }
+
+  .thread-reply {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--paper-2);
+  }
+
+  .thread-reply__head {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--paper-2);
+    border-bottom: 1px solid transparent;
+  }
+
+  .thread-reply__head:hover { background: var(--paper); }
+  .thread-reply.open .thread-reply__head { border-bottom-color: var(--rule); }
+
+  .thread-reply__label {
+    flex: 1;
+    font-size: 12px;
+    color: var(--ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .thread-reply__body {
+    display: none;
+    padding: 12px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .thread-reply.open .thread-reply__body { display: flex; }
+
+  .btn-add-thread-reply {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--paper-2);
+    border: 1px dashed var(--rule);
+    border-radius: var(--radius);
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--ink-3);
+    width: 100%;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .btn-add-thread-reply:hover { border-color: #2d6a4f; color: #2d6a4f; }
+
+  /* Form fields */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .field label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .field input,
+  .field textarea {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+    width: 100%;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    border-color: #1d9bf0;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 72px;
+    line-height: 1.5;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .field-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* ── Right: preview + output ── */
+  .preview-area {
+    grid-area: preview;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .preview-scroll {
+    overflow-y: auto;
+    padding: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .preview-frame {
+    background: #ffffff;
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  /* Output bar */
+  .output-bar {
+    background: var(--paper-2);
+    border-top: 1px solid var(--rule);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .output-bar__label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .output-bar__code {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-2);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-copy {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 8px 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+    transition: background 0.15s;
+  }
+
+  .btn-copy:hover { background: #a93226; }
+  .btn-copy.copied { background: #2d6a4f; }
+
+  /* ── Workskin styles (scoped inside preview-frame) ── */
+  .preview-frame .xcom {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #0f1419;
+    background-color: #ffffff;
+    max-width: 600px;
+    margin: 0 auto;
+    border-left: 1px solid #eff3f4;
+    border-right: 1px solid #eff3f4;
+  }
+  .preview-frame .x-tweet {
+    padding: 12px 16px 0 16px;
+    border-bottom: 1px solid #eff3f4;
+    box-sizing: border-box;
+  }
+  .preview-frame .x-tweet__header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .preview-frame .x-tweet__avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%; overflow: hidden;
+    flex-shrink: 0; margin-right: 12px;
+    background-color: #eff3f4;
+  }
+  .preview-frame .x-tweet__avatar img {
+    width: 40px; height: 40px;
+    border-radius: 50%; display: block;
+  }
+  .preview-frame .x-tweet__identity {
+    display: flex; flex-direction: column;
+    justify-content: center; flex-grow: 1; min-width: 0;
+  }
+  .preview-frame .x-tweet__display-name {
+    font-weight: 700; font-size: 15px; color: #0f1419;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .preview-frame .x-tweet__handle {
+    font-weight: 400; font-size: 15px; color: #536471;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .preview-frame .x-tweet__body {
+    font-size: 15px; font-weight: 400; color: #0f1419;
+    line-height: 24px; margin-bottom: 12px; word-wrap: break-word;
+  }
+  .preview-frame .x-tweet__timestamp {
+    font-size: 15px; color: #536471; font-weight: 400; margin-bottom: 12px;
+  }
+  .preview-frame .x-tweet__divider {
+    height: 1px; background-color: #eff3f4; margin: 0 -16px;
+  }
+  .preview-frame .x-tweet__stats {
+    display: flex; flex-direction: row; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid #eff3f4;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .preview-frame .x-tweet__stat {
+    display: flex; flex-direction: row; align-items: center;
+    gap: 4px; font-size: 14px; color: #536471;
+  }
+  .preview-frame .x-tweet__stat-count { font-weight: 700; color: #0f1419; }
+  .preview-frame .x-tweet__actions {
+    display: flex; flex-direction: row; align-items: center;
+    justify-content: space-between; padding: 4px 0;
+  }
+  .preview-frame .x-tweet__action {
+    display: flex; flex-direction: row; align-items: center;
+    gap: 6px; color: #536471; font-size: 13px; padding: 8px 0; cursor: default;
+  }
+  .preview-frame .x-tweet__action-icon { width: 18px; height: 18px; display: block; }
+  .preview-frame .x-tweet__action-icon img { width: 18px; height: 18px; display: block; }
+  .preview-frame .x-tweet--reply {
+    padding: 12px 16px; display: flex; flex-direction: row;
+    align-items: flex-start; gap: 12px;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__left {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0; width: 40px; align-self: stretch;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__avatar { margin-right: 0; flex-shrink: 0; }
+  .preview-frame .x-tweet__thread-line {
+    width: 2px; flex-grow: 1; background-color: #cfd9de;
+    margin-top: 4px; margin-bottom: -12px;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__right { flex-grow: 1; min-width: 0; }
+  .preview-frame .x-tweet--reply .x-tweet__header {
+    display: flex; flex-direction: row; align-items: center;
+    margin-bottom: 4px; gap: 4px; flex-wrap: wrap;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__display-name { font-size: 15px; }
+  .preview-frame .x-tweet--reply .x-tweet__handle { font-size: 15px; }
+  .preview-frame .x-tweet__dot { color: #536471; font-size: 15px; }
+  .preview-frame .x-tweet--reply .x-tweet__timestamp {
+    font-size: 15px; color: #536471; margin-bottom: 0;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__body {
+    font-size: 15px; margin-bottom: 8px; line-height: 20px;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__actions { padding: 2px 0 0 0; }
+  .preview-frame .x-tweet--reply .x-tweet__action { font-size: 13px; padding: 4px 0; }
+  .preview-frame .x-composer {
+    display: flex; flex-direction: row; align-items: center;
+    padding: 12px 16px; border-bottom: 1px solid #eff3f4; gap: 12px;
+  }
+  .preview-frame .x-composer__avatar {
+    width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
+    flex-shrink: 0; background-color: #eff3f4;
+  }
+  .preview-frame .x-composer__avatar img {
+    width: 40px; height: 40px; border-radius: 50%; display: block;
+  }
+  .preview-frame .x-composer__field {
+    flex-grow: 1; font-size: 20px; color: #536471; font-weight: 400;
+  }
+  .preview-frame .x-composer__button {
+    background-color: #1d9bf0; color: #ffffff; font-weight: 700;
+    font-size: 15px; border-radius: 9999px; padding: 8px 16px;
+    white-space: nowrap; display: inline-block;
+  }
+  .preview-frame .x-thread { border-bottom: 1px solid #eff3f4; }
+  .preview-frame .x-thread .x-tweet--reply { border-bottom: none; padding-bottom: 0; }
+  .preview-frame .x-thread .x-tweet--reply:last-child { padding-bottom: 12px; }
+  .preview-frame .xcom a, .preview-frame .x-tweet a { color: #1d9bf0; text-decoration: none; }
+  .preview-frame .x-tweet__footer {
+    display: flex; flex-direction: row; align-items: center;
+    justify-content: space-between; padding: 8px 0 12px 0;
+    font-size: 14px; color: #536471;
+  }
+  .preview-frame .x-tweet__footer-link { color: #536471; font-size: 14px; }
+
+  /* ── Scrollbar styling ── */
+  .panel::-webkit-scrollbar,
+  .blocks::-webkit-scrollbar,
+  .preview-scroll::-webkit-scrollbar { width: 5px; }
+  .panel::-webkit-scrollbar-track,
+  .blocks::-webkit-scrollbar-track,
+  .preview-scroll::-webkit-scrollbar-track { background: transparent; }
+  .panel::-webkit-scrollbar-thumb,
+  .blocks::-webkit-scrollbar-thumb,
+  .preview-scroll::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+  /* ── Empty state ── */
+  .empty-state {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--ink-3);
+  }
+  .empty-state__icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-state__text { font-size: 13px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <span class="header__title">Workskin Builder</span>
+    <span class="header__sub">AO3 · Twitter / X format</span>
+  </header>
+
+  <!-- Left panel -->
+  <div class="panel">
+
+    <!-- Global icon URLs -->
+    <div class="icon-settings" id="iconSettings">
+      <button class="icon-settings__toggle" onclick="toggleIconSettings()">
+        <span>Icon URLs (shared across all blocks)</span>
+        <span class="icon-settings__toggle-arrow" id="iconArrow">▼</span>
+      </button>
+      <div class="icon-settings__body" id="iconBody">
+        <p style="font-size:11px;color:var(--ink-3);font-family:var(--mono);line-height:1.6;margin-bottom:4px;">
+          Host 18×18px PNG/JPG icons anywhere (Imgur, GitHub, etc.) and paste the direct URLs here. Leave blank to hide that icon.
+        </p>
+        <div class="icon-row"><span class="icon-label">Reply</span>      <input class="icon-input" data-icon="reply"    placeholder="https://…/reply.png"    oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Retweet</span>    <input class="icon-input" data-icon="retweet"  placeholder="https://…/retweet.png"  oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Like</span>       <input class="icon-input" data-icon="like"     placeholder="https://…/like.png"     oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Views</span>      <input class="icon-input" data-icon="views"    placeholder="https://…/views.png"    oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Bookmark</span>   <input class="icon-input" data-icon="bookmark" placeholder="https://…/bookmark.png" oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Share</span>      <input class="icon-input" data-icon="share"    placeholder="https://…/share.png"    oninput="renderPreview()" /></div>
+      </div>
+    </div>
+
+    <!-- Add block buttons -->
+    <div class="blocks">
+      <div class="blocks__add">
+        <button class="btn-add" onclick="addBlock('main')">+ Main Tweet</button>
+        <button class="btn-add" onclick="addBlock('composer')">+ Composer</button>
+        <button class="btn-add" onclick="addBlock('reply')">+ Reply</button>
+        <button class="btn-add" onclick="addBlock('thread')">+ Thread</button>
+      </div>
+
+      <div id="blockList"></div>
+    </div>
+
+  </div>
+
+  <!-- Right: preview + output -->
+  <div class="preview-area">
+    <div class="preview-scroll">
+      <div class="preview-frame">
+        <div class="xcom" id="livePreview">
+          <div class="empty-state">
+            <div class="empty-state__icon">✦</div>
+            <div class="empty-state__text">Add a block to begin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="output-bar">
+      <span class="output-bar__label">HTML output</span>
+      <div class="output-bar__code" id="outputSnippet">—</div>
+      <button class="btn-copy" id="copyBtn" onclick="copyOutput()">Copy HTML</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────
+let blocks = [];
+let nextId = 1;
+
+function uid() { return nextId++; }
+
+function getIcons() {
+  const icons = {};
+  document.querySelectorAll('.icon-input').forEach(el => {
+    icons[el.dataset.icon] = el.value.trim();
+  });
+  return icons;
+}
+
+function iconTag(icons, name) {
+  const url = icons[name];
+  if (!url) return '';
+  return `<span class="x-tweet__action-icon"><img src="${esc(url)}" alt="" /></span>`;
+}
+
+// ── Icon settings toggle ───────────────────────────────────────────────
+function toggleIconSettings() {
+  const body  = document.getElementById('iconBody');
+  const arrow = document.getElementById('iconArrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+// ── Block management ───────────────────────────────────────────────────
+function addBlock(type) {
+  const id = uid();
+  const block = { id, type, open: true };
+
+  if (type === 'main') {
+    Object.assign(block, {
+      avatar: '', name: '', handle: '', body: '',
+      timestamp: '5:59 PM · Apr 22, 2026',
+      replies: '7', reposts: '16', likes: '677', bookmarks: '21', views: '26.9K',
+      showComposer: false, composerAvatar: ''
+    });
+  } else if (type === 'composer') {
+    Object.assign(block, { avatar: '' });
+  } else if (type === 'reply') {
+    Object.assign(block, {
+      avatar: '', name: '', handle: '', timestamp: 'Apr 22', body: '',
+      replies: '', likes: '', views: '', bookmarks: ''
+    });
+  } else if (type === 'thread') {
+    Object.assign(block, { replies: [] });
+  }
+
+  blocks.push(block);
+  renderPanel();
+  renderPreview();
+}
+
+function removeBlock(id) {
+  blocks = blocks.filter(b => b.id !== id);
+  renderPanel();
+  renderPreview();
+}
+
+function moveBlock(id, dir) {
+  const i = blocks.findIndex(b => b.id === id);
+  const j = i + dir;
+  if (j < 0 || j >= blocks.length) return;
+  [blocks[i], blocks[j]] = [blocks[j], blocks[i]];
+  renderPanel();
+  renderPreview();
+}
+
+function toggleBlock(id) {
+  const b = blocks.find(b => b.id === id);
+  if (b) b.open = !b.open;
+  renderPanel();
+}
+
+function addThreadReply(blockId) {
+  const b = blocks.find(b => b.id === blockId);
+  if (!b) return;
+  b.replies.push({
+    id: uid(), open: true,
+    avatar: '', name: '', handle: '', timestamp: '6h', body: '',
+    replies: '', likes: '', views: '', bookmarks: ''
+  });
+  renderPanel();
+  renderPreview();
+}
+
+function removeThreadReply(blockId, replyId) {
+  const b = blocks.find(b => b.id === blockId);
+  if (!b) return;
+  b.replies = b.replies.filter(r => r.id !== replyId);
+  renderPanel();
+  renderPreview();
+}
+
+function toggleThreadReply(blockId, replyId) {
+  const b = blocks.find(b => b.id === blockId);
+  const r = b && b.replies.find(r => r.id === replyId);
+  if (r) r.open = !r.open;
+  renderPanel();
+}
+
+// ── Panel rendering ────────────────────────────────────────────────────
+function renderPanel() {
+  const list = document.getElementById('blockList');
+  if (blocks.length === 0) {
+    list.innerHTML = '';
+    return;
+  }
+  list.innerHTML = blocks.map((b, i) => blockHTML(b, i)).join('');
+}
+
+function blockHTML(b, i) {
+  const typeLabels = { main: 'MAIN TWEET', reply: 'REPLY', thread: 'THREAD', composer: 'COMPOSER' };
+  const label = previewLabel(b);
+
+  return `
+  <div class="block ${b.open ? 'open' : ''}" id="block-${b.id}">
+    <div class="block__head" onclick="toggleBlock(${b.id})">
+      <span class="block__type block__type--${b.type}">${typeLabels[b.type]}</span>
+      <span class="block__label">${label}</span>
+      <div class="block__controls" onclick="event.stopPropagation()">
+        ${i > 0 ? `<button class="block__btn" onclick="moveBlock(${b.id},-1)" title="Move up">↑</button>` : ''}
+        ${i < blocks.length-1 ? `<button class="block__btn" onclick="moveBlock(${b.id},1)" title="Move down">↓</button>` : ''}
+        <button class="block__btn" onclick="removeBlock(${b.id})" title="Remove">✕</button>
+      </div>
+    </div>
+    <div class="block__body">
+      ${blockFields(b)}
+    </div>
+  </div>`;
+}
+
+function previewLabel(b) {
+  if (b.type === 'main')     return b.name || 'Unnamed tweet';
+  if (b.type === 'reply')    return b.name || 'Unnamed reply';
+  if (b.type === 'composer') return 'Reply composer bar';
+  if (b.type === 'thread')   return `Thread (${b.replies.length} repl${b.replies.length===1?'y':'ies'})`;
+  return '';
+}
+
+function blockFields(b) {
+  if (b.type === 'main') return mainFields(b);
+  if (b.type === 'reply') return replyFields(b, b.id, false);
+  if (b.type === 'composer') return composerFields(b);
+  if (b.type === 'thread') return threadFields(b);
+  return '';
+}
+
+function avatarField(val, bid, field, label) {
+  label = label || 'Avatar URL';
+  return `<div class="field">
+    <label>${label}</label>
+    <input type="text" placeholder="https://…/avatar.jpg" value="${esc(val)}"
+      oninput="updateField(${bid},'${field}',this.value)" />
+  </div>`;
+}
+
+function mainFields(b) {
+  return `
+  ${avatarField(b.avatar, b.id, 'avatar')}
+  <div class="field-row">
+    <div class="field"><label>Display name</label>
+      <input type="text" placeholder="rat liker" value="${esc(b.name)}"
+        oninput="updateField(${b.id},'name',this.value)" /></div>
+    <div class="field"><label>Handle</label>
+      <input type="text" placeholder="@rat_liker" value="${esc(b.handle)}"
+        oninput="updateField(${b.id},'handle',this.value)" /></div>
+  </div>
+  <div class="field"><label>Tweet text</label>
+    <textarea placeholder="What's happening?" oninput="updateField(${b.id},'body',this.value)">${esc(b.body)}</textarea>
+  </div>
+  <div class="field"><label>Timestamp</label>
+    <input type="text" placeholder="5:59 PM · Apr 22, 2026" value="${esc(b.timestamp)}"
+      oninput="updateField(${b.id},'timestamp',this.value)" /></div>
+  <div class="field-row-3">
+    <div class="field"><label>Replies</label>
+      <input type="text" value="${esc(b.replies)}" oninput="updateField(${b.id},'replies',this.value)" /></div>
+    <div class="field"><label>Reposts</label>
+      <input type="text" value="${esc(b.reposts)}" oninput="updateField(${b.id},'reposts',this.value)" /></div>
+    <div class="field"><label>Likes</label>
+      <input type="text" value="${esc(b.likes)}" oninput="updateField(${b.id},'likes',this.value)" /></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Bookmarks</label>
+      <input type="text" value="${esc(b.bookmarks)}" oninput="updateField(${b.id},'bookmarks',this.value)" /></div>
+    <div class="field"><label>Views</label>
+      <input type="text" value="${esc(b.views)}" oninput="updateField(${b.id},'views',this.value)" /></div>
+  </div>`;
+}
+
+function composerFields(b) {
+  return `${avatarField(b.avatar, b.id, 'avatar', 'Reader avatar URL')}
+  <p style="font-size:11px;color:var(--ink-3);font-family:var(--mono);">
+    The "Post your reply" bar is decorative — text and button are fixed.
+  </p>`;
+}
+
+function replyFields(b, bid, isThreadChild) {
+  const upd = (field) => isThreadChild
+    ? `updateThreadReplyField(${bid},${b.id},'${field}',this.value)`
+    : `updateField(${bid},'${field}',this.value)`;
+  return `
+  <div class="field"><label>Avatar URL</label>
+    <input type="text" placeholder="https://…/avatar.jpg" value="${esc(b.avatar)}"
+      oninput="${upd('avatar')}" /></div>
+  <div class="field-row">
+    <div class="field"><label>Display name</label>
+      <input type="text" placeholder="username" value="${esc(b.name)}"
+        oninput="${upd('name')}" /></div>
+    <div class="field"><label>Handle</label>
+      <input type="text" placeholder="@handle" value="${esc(b.handle)}"
+        oninput="${upd('handle')}" /></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Timestamp</label>
+      <input type="text" placeholder="6h" value="${esc(b.timestamp)}"
+        oninput="${upd('timestamp')}" /></div>
+  </div>
+  <div class="field"><label>Reply text</label>
+    <textarea placeholder="Reply content…" oninput="${upd('body')}">${esc(b.body)}</textarea>
+  </div>
+  <div class="field-row-3">
+    <div class="field"><label>Replies</label>
+      <input type="text" value="${esc(b.replies)}" oninput="${upd('replies')}" /></div>
+    <div class="field"><label>Likes</label>
+      <input type="text" value="${esc(b.likes)}" oninput="${upd('likes')}" /></div>
+    <div class="field"><label>Views</label>
+      <input type="text" value="${esc(b.views)}" oninput="${upd('views')}" /></div>
+  </div>`;
+}
+
+function threadFields(b) {
+  const repliesHTML = b.replies.map((r, ri) => `
+    <div class="thread-reply ${r.open ? 'open' : ''}" id="treply-${b.id}-${r.id}">
+      <div class="thread-reply__head" onclick="toggleThreadReply(${b.id},${r.id})">
+        <span class="block__type block__type--reply" style="font-size:9px;padding:1px 6px;">REPLY ${ri+1}</span>
+        <span class="thread-reply__label">${r.name || 'Unnamed'}</span>
+        <div class="block__controls" onclick="event.stopPropagation()">
+          <button class="block__btn" onclick="removeThreadReply(${b.id},${r.id})">✕</button>
+        </div>
+      </div>
+      <div class="thread-reply__body">
+        ${replyFields(r, b.id, true)}
+      </div>
+    </div>`).join('');
+
+  return `
+  <div class="thread-replies">${repliesHTML}</div>
+  <button class="btn-add-thread-reply" onclick="addThreadReply(${b.id})">+ Add reply to thread</button>`;
+}
+
+// ── Field updates ──────────────────────────────────────────────────────
+function updateField(id, field, value) {
+  const b = blocks.find(b => b.id === id);
+  if (b) b[field] = value;
+  renderPreview();
+  updateOutputSnippet();
+}
+
+function updateThreadReplyField(blockId, replyId, field, value) {
+  const b = blocks.find(b => b.id === blockId);
+  const r = b && b.replies.find(r => r.id === replyId);
+  if (r) r[field] = value;
+  renderPreview();
+  updateOutputSnippet();
+}
+
+// Special handler for thread reply avatar (field name encodes ids)
+document.addEventListener('input', function(e) {
+  if (!e.target.matches('input')) return;
+  // handled by inline oninput
+});
+
+// ── HTML generation ────────────────────────────────────────────────────
+function esc(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function actionBar(icons, counts, compact) {
+  const pad = compact ? '' : '8px 0';
+  return `
+    <div class="x-tweet__actions">
+      <span class="x-tweet__action">${iconTag(icons,'reply')}${counts.replies ? esc(counts.replies) : ''}</span>
+      <span class="x-tweet__action">${iconTag(icons,'retweet')}${counts.reposts ? esc(counts.reposts) : ''}</span>
+      <span class="x-tweet__action">${iconTag(icons,'like')}${counts.likes ? esc(counts.likes) : ''}</span>
+      <span class="x-tweet__action">${iconTag(icons,'views')}${counts.views ? esc(counts.views) : ''}</span>
+      <span class="x-tweet__action">${iconTag(icons,'bookmark')}${counts.bookmarks ? esc(counts.bookmarks) : ''}</span>
+      <span class="x-tweet__action">${iconTag(icons,'share')}</span>
+    </div>`;
+}
+
+function generateMainTweet(b, icons) {
+  return `
+<div class="x-tweet x-tweet--main">
+  <div class="x-tweet__header">
+    <div class="x-tweet__avatar">${b.avatar ? `<img src="${esc(b.avatar)}" alt="${esc(b.name)} avatar" />` : ''}</div>
+    <div class="x-tweet__identity">
+      <span class="x-tweet__display-name">${esc(b.name)}</span>
+      <span class="x-tweet__handle">${esc(b.handle)}</span>
+    </div>
+  </div>
+  <div class="x-tweet__body">${esc(b.body)}</div>
+  <div class="x-tweet__timestamp">${esc(b.timestamp)}</div>
+  <div class="x-tweet__divider"></div>
+  <div class="x-tweet__stats">
+    ${b.replies   ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.replies)}</span> Replies</span>` : ''}
+    ${b.reposts   ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.reposts)}</span> Reposts</span>` : ''}
+    ${b.likes     ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.likes)}</span> Likes</span>` : ''}
+    ${b.bookmarks ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.bookmarks)}</span> Bookmarks</span>` : ''}
+    ${b.views     ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.views)}</span> Views</span>` : ''}
+  </div>
+  ${actionBar(icons, b, false)}
+  <div class="x-tweet__footer">
+    <span class="x-tweet__footer-link">Relevant &#x2304;</span>
+    <span class="x-tweet__footer-link">View quotes &gt;</span>
+  </div>
+</div>`;
+}
+
+function generateComposer(b) {
+  return `
+<div class="x-composer">
+  <div class="x-composer__avatar">${b.avatar ? `<img src="${esc(b.avatar)}" alt="your avatar" />` : ''}</div>
+  <span class="x-composer__field">Post your reply</span>
+  <span class="x-composer__button">Reply</span>
+</div>`;
+}
+
+function generateReply(r, icons, hasThreadLine) {
+  return `
+<div class="x-tweet x-tweet--reply">
+  <div class="x-tweet__left">
+    <div class="x-tweet__avatar">${r.avatar ? `<img src="${esc(r.avatar)}" alt="${esc(r.name)} avatar" />` : ''}</div>
+    ${hasThreadLine ? '<div class="x-tweet__thread-line"></div>' : ''}
+  </div>
+  <div class="x-tweet__right">
+    <div class="x-tweet__header">
+      <span class="x-tweet__display-name">${esc(r.name)}</span>
+      <span class="x-tweet__handle">${esc(r.handle)}</span>
+      <span class="x-tweet__dot">·</span>
+      <span class="x-tweet__timestamp">${esc(r.timestamp)}</span>
+    </div>
+    <div class="x-tweet__body">${esc(r.body)}</div>
+    ${actionBar(icons, r, true)}
+  </div>
+</div>`;
+}
+
+function generateThread(b, icons) {
+  if (b.replies.length === 0) return '';
+  const inner = b.replies.map((r, i) =>
+    generateReply(r, icons, i < b.replies.length - 1)
+  ).join('\n');
+  return `\n<div class="x-thread">${inner}\n</div>`;
+}
+
+function generateFullHTML(icons) {
+  if (blocks.length === 0) return '';
+  const parts = blocks.map(b => {
+    if (b.type === 'main')     return generateMainTweet(b, icons);
+    if (b.type === 'composer') return generateComposer(b);
+    if (b.type === 'reply')    return generateReply(b, icons, false);
+    if (b.type === 'thread')   return generateThread(b, icons);
+    return '';
+  });
+  return `<div class="xcom">\n${parts.join('\n')}\n</div>`;
+}
+
+// ── Preview ────────────────────────────────────────────────────────────
+function renderPreview() {
+  const icons = getIcons();
+  const html = generateFullHTML(icons);
+  const preview = document.getElementById('livePreview');
+
+  if (!html) {
+    preview.innerHTML = `<div class="empty-state">
+      <div class="empty-state__icon">✦</div>
+      <div class="empty-state__text">Add a block to begin</div>
+    </div>`;
+    return;
+  }
+
+  // Replace the xcom wrapper — we already have xcom as the container
+  // Strip outer <div class="xcom">…</div> for insertion
+  const inner = html.replace(/^<div class="xcom">\n?/, '').replace(/\n?<\/div>$/, '');
+  preview.innerHTML = inner;
+  updateOutputSnippet();
+}
+
+function updateOutputSnippet() {
+  const icons = getIcons();
+  const html = generateFullHTML(icons);
+  const snip = document.getElementById('outputSnippet');
+  snip.textContent = html ? html.slice(0, 120) + '…' : '—';
+}
+
+// ── Copy ───────────────────────────────────────────────────────────────
+function copyOutput() {
+  const icons = getIcons();
+  const html = generateFullHTML(icons);
+  if (!html) return;
+  navigator.clipboard.writeText(html).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy HTML';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+
+</script>
+</body>
+</html>
