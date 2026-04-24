@@ -497,16 +497,6 @@
   .preview-frame .x-tweet__divider {
     height: 1px; background-color: #eff3f4; margin: 0 -16px;
   }
-  .preview-frame .x-tweet__stats {
-    display: flex; flex-direction: row; align-items: center;
-    padding: 12px 0; border-bottom: 1px solid #eff3f4;
-    gap: 16px; flex-wrap: wrap;
-  }
-  .preview-frame .x-tweet__stat {
-    display: flex; flex-direction: row; align-items: center;
-    gap: 4px; font-size: 14px; color: #536471;
-  }
-  .preview-frame .x-tweet__stat-count { font-weight: 700; color: #0f1419; }
   .preview-frame .x-tweet__actions {
     display: flex; flex-direction: row; align-items: center;
     justify-content: space-between; padding: 4px 0;
@@ -568,13 +558,6 @@
   .preview-frame .x-thread { border-bottom: 1px solid #eff3f4; }
   .preview-frame .x-thread .x-tweet--reply { border-bottom: none; padding-bottom: 0; }
   .preview-frame .x-thread .x-tweet--reply:last-child { padding-bottom: 12px; }
-  .preview-frame .xcom a, .preview-frame .x-tweet a { color: #1d9bf0; text-decoration: none; }
-  .preview-frame .x-tweet__footer {
-    display: flex; flex-direction: row; align-items: center;
-    justify-content: space-between; padding: 8px 0 12px 0;
-    font-size: 14px; color: #536471;
-  }
-  .preview-frame .x-tweet__footer-link { color: #536471; font-size: 14px; }
 
   /* ── Scrollbar styling ── */
   .panel::-webkit-scrollbar,
@@ -839,9 +822,15 @@ function mainFields(b) {
   <div class="field"><label>Tweet text</label>
     <textarea placeholder="What's happening?" oninput="updateField(${b.id},'body',this.value)">${esc(b.body)}</textarea>
   </div>
-  <div class="field"><label>Timestamp</label>
-    <input type="text" placeholder="5:59 PM · Apr 22, 2026" value="${esc(b.timestamp)}"
-      oninput="updateField(${b.id},'timestamp',this.value)" /></div>
+  <div class="field-row">
+    <div class="field"><label>Timestamp</label>
+      <input type="text" placeholder="5:59 PM · Apr 22, 2026" value="${esc(b.timestamp)}"
+        oninput="updateField(${b.id},'timestamp',this.value)" /></div>
+    <div class="field"><label>Views</label>
+      <input type="text" placeholder="26.9K" value="${esc(b.views)}"
+        oninput="updateField(${b.id},'views',this.value)" /></div>
+  </div>
+  <p style="font-size:11px;color:var(--ink-3);font-family:var(--mono);margin-top:-4px;">Timestamp · Views appear on one line. Leave Views blank to omit.</p>
   <div class="field-row-3">
     <div class="field"><label>Replies</label>
       <input type="text" value="${esc(b.replies)}" oninput="updateField(${b.id},'replies',this.value)" /></div>
@@ -960,6 +949,9 @@ function actionBar(icons, counts, compact) {
 }
 
 function generateMainTweet(b, icons) {
+  const timestampLine = b.views
+    ? `${esc(b.timestamp)} · <strong>${esc(b.views)}</strong> Views`
+    : esc(b.timestamp);
   return `
 <div class="x-tweet x-tweet--main">
   <div class="x-tweet__header">
@@ -970,20 +962,9 @@ function generateMainTweet(b, icons) {
     </div>
   </div>
   <div class="x-tweet__body">${esc(b.body)}</div>
-  <div class="x-tweet__timestamp">${esc(b.timestamp)}</div>
+  <div class="x-tweet__timestamp">${timestampLine}</div>
   <div class="x-tweet__divider"></div>
-  <div class="x-tweet__stats">
-    ${b.replies   ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.replies)}</span> Replies</span>` : ''}
-    ${b.reposts   ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.reposts)}</span> Reposts</span>` : ''}
-    ${b.likes     ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.likes)}</span> Likes</span>` : ''}
-    ${b.bookmarks ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.bookmarks)}</span> Bookmarks</span>` : ''}
-    ${b.views     ? `<span class="x-tweet__stat"><span class="x-tweet__stat-count">${esc(b.views)}</span> Views</span>` : ''}
-  </div>
   ${actionBar(icons, b, false)}
-  <div class="x-tweet__footer">
-    <span class="x-tweet__footer-link">Relevant &#x2304;</span>
-    <span class="x-tweet__footer-link">View quotes &gt;</span>
-  </div>
 </div>`;
 }
 
