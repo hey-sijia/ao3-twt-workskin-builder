@@ -106,13 +106,6 @@
   margin: 0 -16px;
 }
 
-.x-tweet__action-group {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 4px;
-}
-
 /* Action bar: reply, retweet, like, bookmark, share icons */
 .x-tweet__actions {
   display: flex;
@@ -311,3 +304,5 @@
   color: #1d9bf0;
   text-decoration: none;
 }
+
+
