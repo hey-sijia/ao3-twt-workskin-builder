@@ -1,269 +1,381 @@
 /* ============================================================
    TWITTER / X WORKSKIN FOR ARCHIVE OF OUR OWN
-   Paste the full contents of this file into your AO3 skin's
-   CSS field (Site Skins > Create Skin, or Work Skin).
+   v9 — Built strictly following ao3-workskin-css-rules-v3.md
+   - Every rule prefixed with #workskin
+   - p+span pattern for inline text runs
+   - float+overflow:hidden for two-column layouts
+   - display:table/table-cell for action bars
+   - text-align:left on all elements
+   - No repeated properties (all longhand)
+   - No gap, no flex-wrap, no grid, no CSS variables
+   - No font shorthand, no rem units
    ============================================================ */
 
-/* --- Scoping wrapper --- */
-/* All elements must be inside <div class="xcom"> in your work body */
+/* ── Blanket margin/padding reset — overrides all AO3 defaults inside .xcom ── */
+#workskin .xcom * {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
 
-.xcom {
+/* ── Outer wrapper ── */
+#workskin .xcom {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 15px;
   line-height: 1.5;
   color: #0f1419;
   background-color: #ffffff;
   max-width: 600px;
-  margin: 0 auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
   border-left: 1px solid #eff3f4;
   border-right: 1px solid #eff3f4;
+  text-align: left;
 }
 
 /* ============================================================
-   TWEET CARD — the main/focal tweet (large format)
-   Usage: <div class="x-tweet x-tweet--main">
+   MAIN TWEET
    ============================================================ */
 
-.x-tweet {
+#workskin .x-tweet {
   padding: 12px 16px 0 16px;
   border-bottom: 1px solid #eff3f4;
   box-sizing: border-box;
+  overflow: hidden;
+  text-align: left;
 }
 
-/* Header row: avatar + name/handle block */
-.x-tweet__header {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+/* Header: avatar float left, identity fills remaining space */
+#workskin .x-tweet__header {
+  overflow: hidden;
   margin-bottom: 12px;
+  text-align: left;
 }
 
-.x-tweet__avatar {
+#workskin .x-tweet__avatar {
+  float: left;
   width: 40px;
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
-  flex-shrink: 0;
   margin-right: 12px;
   background-color: #eff3f4;
 }
 
-.x-tweet__avatar img {
+#workskin .x-tweet__avatar img {
+  display: block;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  display: block;
 }
 
-.x-tweet__identity {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex-grow: 1;
-  min-width: 0;
+#workskin .x-tweet__identity {
+  overflow: hidden;
+  padding-top: 2px;
+  text-align: left;
 }
 
-.x-tweet__display-name {
+/* p tags for display name and handle — margin reset prevents AO3 default spacing */
+#workskin .x-tweet__display-name {
   font-weight: 700;
   font-size: 15px;
   color: #0f1419;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  text-align: left;
 }
 
-.x-tweet__handle {
+#workskin .x-tweet__handle {
   font-weight: 400;
   font-size: 15px;
   color: #536471;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  text-align: left;
 }
 
-/* Main tweet body text */
-.x-tweet__body {
+#workskin .x-tweet__body {
   font-size: 15px;
   font-weight: 400;
   color: #0f1419;
   line-height: 24px;
   margin-bottom: 12px;
   word-wrap: break-word;
+  clear: both;
+  text-align: left;
 }
 
-/* Timestamp line beneath body on main tweet */
-.x-tweet__timestamp {
+#workskin .x-tweet__timestamp {
   font-size: 15px;
   color: #536471;
   font-weight: 400;
   margin-bottom: 12px;
+  text-align: left;
 }
 
-/* Divider line above engagement bar */
-.x-tweet__divider {
+#workskin .x-tweet__divider {
   height: 1px;
   background-color: #eff3f4;
-  margin: 0 -16px;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: -16px;
+  margin-right: -16px;
 }
 
-/* Action bar: reply, retweet, like, bookmark, share icons */
-.x-tweet__actions {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 0 4px 0;
+#workskin .x-tweet__image {
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 
-.x-tweet__action {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
+#workskin .x-tweet__image img {
+  width: 100%;
+  display: block;
+  border-radius: 32px;
+}
+
+#workskin .x-tweet--reply .x-tweet__image {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* ── Action bar — display:table proven reliable on AO3 ── */
+#workskin .x-tweet__actions {
+  display: table;
+  width: 100%;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+
+#workskin .x-tweet__action {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
   color: #536471;
   font-size: 13px;
   padding: 8px 0;
-  cursor: default;
+  white-space: nowrap;
 }
 
-.x-tweet__action-icon {
+#workskin .x-tweet__action img {
+  display: inline;
+  vertical-align: middle;
   width: 18px;
   height: 18px;
-  display: block;
+  margin-right: 4px;
 }
 
-.x-tweet__action-icon img {
-  width: 18px;
-  height: 18px;
-  display: block;
+#workskin .x-tweet__action-group {
+  display: table-cell;
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+  padding: 8px 0;
+}
+
+#workskin .x-tweet__action-group .x-tweet__action {
+  display: inline-block;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#workskin .x-tweet__action-group .x-tweet__action + .x-tweet__action {
+  margin-left: 4px;
 }
 
 /* ============================================================
-   COMPACT TWEET — used for replies in the thread
-   Usage: <div class="x-tweet x-tweet--reply">
+   REPLY TWEET
    ============================================================ */
 
-.x-tweet--reply {
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-/* Left column: avatar + optional thread line */
-.x-tweet--reply .x-tweet__left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  width: 40px;
-  align-self: stretch;
-}
-
-.x-tweet--reply .x-tweet__avatar {
-  margin-right: 0;
-  flex-shrink: 0;
-}
-
-/* Vertical line connecting replies in a thread */
-.x-tweet__thread-line {
-  width: 2px;
-  flex-grow: 1;
-  background-color: #cfd9de;
-  margin-top: 4px;
-  margin-bottom: -12px;
-}
-
-/* Right column: content */
-.x-tweet--reply .x-tweet__right {
-  flex-grow: 1;
-  min-width: 0;
-}
-
-/* Inline header for reply: name · handle · time on one line */
-.x-tweet--reply .x-tweet__header {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 4px;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-.x-tweet--reply .x-tweet__display-name {
-  font-size: 15px;
-}
-
-.x-tweet--reply .x-tweet__handle {
-  font-size: 15px;
-}
-
-.x-tweet--reply .x-tweet__dot {
-  color: #536471;
-  font-size: 15px;
-}
-
-.x-tweet--reply .x-tweet__timestamp {
-  font-size: 15px;
-  color: #536471;
-  margin-bottom: 0;
-}
-
-.x-tweet--reply .x-tweet__body {
-  font-size: 15px;
-  margin-bottom: 8px;
-  line-height: 20px;
-}
-
-/* Compact action bar for replies */
-.x-tweet--reply .x-tweet__actions {
-  padding: 2px 0 0 0;
-}
-
-.x-tweet--reply .x-tweet__action {
-  font-size: 13px;
-  padding: 4px 0;
-}
-
-/* ============================================================
-   REPLY COMPOSER STUB
-   Usage: <div class="x-composer">
-   ============================================================ */
-
-.x-composer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+#workskin .x-tweet--reply {
   padding: 12px 16px;
   border-bottom: 1px solid #eff3f4;
-  gap: 12px;
+  overflow: hidden;
+  box-sizing: border-box;
+  text-align: left;
 }
 
-.x-composer__avatar {
+/* Left column: float left, fixed width */
+#workskin .x-tweet--reply .x-tweet__left {
+  float: left;
+  width: 40px;
+  margin-right: 12px;
+  text-align: center;
+}
+
+#workskin .x-tweet--reply .x-tweet__avatar {
+  float: none;
   width: 40px;
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
-  flex-shrink: 0;
   background-color: #eff3f4;
+  margin-right: 0;
 }
 
-.x-composer__avatar img {
+#workskin .x-tweet__thread-line {
+  display: block;
+  width: 2px;
+  min-height: 20px;
+  background-color: #cfd9de;
+  margin-top: 4px;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Right column: overflow hidden creates block formatting context */
+#workskin .x-tweet--reply .x-tweet__right {
+  overflow: hidden;
+  text-align: left;
+}
+
+/* Reply header: p tag containing inline spans — p margin reset is critical */
+#workskin .x-tweet--reply .x-tweet__header {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  text-align: left;
+}
+
+#workskin .x-tweet--reply .x-tweet__header .x-tweet__display-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: #0f1419;
+}
+
+#workskin .x-tweet--reply .x-tweet__header .x-tweet__handle {
+  font-weight: 400;
+  font-size: 15px;
+  color: #536471;
+  margin-left: 4px;
+}
+
+#workskin .x-tweet__dot {
+  color: #536471;
+  font-size: 15px;
+  margin-left: 4px;
+}
+
+#workskin .x-tweet--reply .x-tweet__header .x-tweet__timestamp {
+  font-size: 15px;
+  color: #536471;
+  margin-left: 4px;
+}
+
+#workskin .x-tweet--reply .x-tweet__body {
+  font-size: 15px;
+  line-height: 20px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  word-wrap: break-word;
+  text-align: left;
+}
+
+#workskin .x-tweet--reply .x-tweet__actions {
+  display: table;
+  width: 100%;
+  padding-top: 2px;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+#workskin .x-tweet--reply .x-tweet__action {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  color: #536471;
+  font-size: 13px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 0;
+  padding-right: 0;
+  white-space: nowrap;
+  width: 25%;
+}
+
+#workskin .x-tweet--reply .x-tweet__action:first-child {
+  text-align: left;
+}
+
+#workskin .x-tweet--reply .x-tweet__action-group {
+  display: table-cell;
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 0;
+  padding-right: 0;
+  width: auto;
+}
+
+#workskin .x-tweet--reply .x-tweet__action-group .x-tweet__action {
+  display: inline-block;
+  width: auto;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#workskin .x-tweet--reply .x-tweet__action-group .x-tweet__action + .x-tweet__action {
+  margin-left: 16px;
+}
+
+/* ============================================================
+   REPLY COMPOSER STUB
+   ============================================================ */
+
+#workskin .x-composer {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eff3f4;
+  overflow: hidden;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+#workskin .x-composer__avatar {
+  float: left;
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  overflow: hidden;
+  background-color: #eff3f4;
+  margin-right: 12px;
+}
+
+#workskin .x-composer__avatar img {
   display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
-.x-composer__field {
-  flex-grow: 1;
-  font-size: 20px;
-  color: #536471;
-  font-weight: 400;
-}
-
-.x-composer__button {
+#workskin .x-composer__button {
+  float: right;
+  display: inline-block;
   background-color: #1d9bf0;
   color: #ffffff;
   font-weight: 700;
@@ -271,38 +383,42 @@
   border-radius: 9999px;
   padding: 8px 16px;
   white-space: nowrap;
-  display: inline-block;
+  text-align: center;
+}
+
+#workskin .x-composer__field {
+  overflow: hidden;
+  font-size: 20px;
+  color: #536471;
+  font-weight: 400;
+  padding-top: 8px;
+  text-align: left;
 }
 
 /* ============================================================
    THREAD GROUPING
-   Usage: <div class="x-thread"> wraps a chain of
-          x-tweet--reply items that are visually connected
    ============================================================ */
 
-.x-thread {
+#workskin .x-thread {
   border-bottom: 1px solid #eff3f4;
 }
 
-/* Remove the individual border-bottom from replies inside a thread */
-.x-thread .x-tweet--reply {
+#workskin .x-thread .x-tweet--reply {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-/* Last reply in a thread gets normal bottom padding */
-.x-thread .x-tweet--reply:last-child {
+#workskin .x-thread .x-tweet--reply:last-child {
   padding-bottom: 12px;
 }
 
-/* ============================================================
-   LINKS inside tweets
-   ============================================================ */
-
-.xcom a,
-.x-tweet a {
+/* ── Links ── */
+#workskin .xcom a {
   color: #1d9bf0;
   text-decoration: none;
 }
 
-
+#workskin .x-tweet a {
+  color: #1d9bf0;
+  text-decoration: none;
+}

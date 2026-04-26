@@ -442,7 +442,19 @@
   .btn-copy:hover { background: #a93226; }
   .btn-copy.copied { background: #2d6a4f; }
 
-  /* ── Workskin styles (scoped inside preview-frame) ── */
+  /* ── Workskin preview styles v9 — follows v3 AO3 rules exactly ── */
+
+  .preview-frame .xcom * {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .preview-frame .xcom {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 15px;
@@ -450,114 +462,319 @@
     color: #0f1419;
     background-color: #ffffff;
     max-width: 600px;
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
     border-left: 1px solid #eff3f4;
     border-right: 1px solid #eff3f4;
+    text-align: left;
   }
   .preview-frame .x-tweet {
     padding: 12px 16px 0 16px;
     border-bottom: 1px solid #eff3f4;
     box-sizing: border-box;
+    overflow: hidden;
+    text-align: left;
   }
   .preview-frame .x-tweet__header {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
+    overflow: hidden;
     margin-bottom: 12px;
+    text-align: left;
   }
   .preview-frame .x-tweet__avatar {
-    width: 40px; height: 40px;
-    border-radius: 50%; overflow: hidden;
-    flex-shrink: 0; margin-right: 12px;
+    float: left;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 12px;
     background-color: #eff3f4;
   }
   .preview-frame .x-tweet__avatar img {
-    width: 40px; height: 40px;
-    border-radius: 50%; display: block;
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
   }
   .preview-frame .x-tweet__identity {
-    display: flex; flex-direction: column;
-    justify-content: center; flex-grow: 1; min-width: 0;
+    overflow: hidden;
+    padding-top: 2px;
+    text-align: left;
   }
   .preview-frame .x-tweet__display-name {
-    font-weight: 700; font-size: 15px; color: #0f1419;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-weight: 700;
+    font-size: 15px;
+    color: #0f1419;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: left;
   }
   .preview-frame .x-tweet__handle {
-    font-weight: 400; font-size: 15px; color: #536471;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-weight: 400;
+    font-size: 15px;
+    color: #536471;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: left;
   }
   .preview-frame .x-tweet__body {
-    font-size: 15px; font-weight: 400; color: #0f1419;
-    line-height: 24px; margin-bottom: 12px; word-wrap: break-word;
+    font-size: 15px;
+    font-weight: 400;
+    color: #0f1419;
+    line-height: 24px;
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    clear: both;
+    text-align: left;
   }
   .preview-frame .x-tweet__timestamp {
-    font-size: 15px; color: #536471; font-weight: 400; margin-bottom: 12px;
+    font-size: 15px;
+    color: #536471;
+    font-weight: 400;
+    margin-bottom: 12px;
+    text-align: left;
   }
   .preview-frame .x-tweet__divider {
-    height: 1px; background-color: #eff3f4; margin: 0 -16px;
+    height: 1px;
+    background-color: #eff3f4;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: -16px;
+    margin-right: -16px;
   }
   .preview-frame .x-tweet__actions {
-    display: flex; flex-direction: row; align-items: center;
-    justify-content: space-between; padding: 4px 0;
+    display: table;
+    width: 100%;
+    padding: 4px 0;
+    box-sizing: border-box;
   }
   .preview-frame .x-tweet__action {
-    display: flex; flex-direction: row; align-items: center;
-    gap: 6px; color: #536471; font-size: 13px; padding: 8px 0; cursor: default;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    color: #536471;
+    font-size: 13px;
+    padding: 8px 0;
+    white-space: nowrap;
   }
-  .preview-frame .x-tweet__action-icon { width: 18px; height: 18px; display: block; }
-  .preview-frame .x-tweet__action-icon img { width: 18px; height: 18px; display: block; }
+  .preview-frame .x-tweet__action img {
+    display: inline;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    margin-right: 4px;
+  }
+  .preview-frame .x-tweet__action-group {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+    white-space: nowrap;
+    padding: 8px 0;
+  }
+  .preview-frame .x-tweet__action-group .x-tweet__action {
+    display: inline-block;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .preview-frame .x-tweet__action-group .x-tweet__action + .x-tweet__action {
+    margin-left: 4px;
+  }
   .preview-frame .x-tweet--reply {
-    padding: 12px 16px; display: flex; flex-direction: row;
-    align-items: flex-start; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eff3f4;
+    overflow: hidden;
+    box-sizing: border-box;
+    text-align: left;
   }
   .preview-frame .x-tweet--reply .x-tweet__left {
-    display: flex; flex-direction: column; align-items: center;
-    flex-shrink: 0; width: 40px; align-self: stretch;
+    float: left;
+    width: 40px;
+    margin-right: 12px;
+    text-align: center;
   }
-  .preview-frame .x-tweet--reply .x-tweet__avatar { margin-right: 0; flex-shrink: 0; }
+  .preview-frame .x-tweet--reply .x-tweet__avatar {
+    float: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #eff3f4;
+    margin-right: 0;
+  }
   .preview-frame .x-tweet__thread-line {
-    width: 2px; flex-grow: 1; background-color: #cfd9de;
-    margin-top: 4px; margin-bottom: -12px;
+    display: block;
+    width: 2px;
+    min-height: 20px;
+    background-color: #cfd9de;
+    margin-top: 4px;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
-  .preview-frame .x-tweet--reply .x-tweet__right { flex-grow: 1; min-width: 0; }
+  .preview-frame .x-tweet--reply .x-tweet__right {
+    overflow: hidden;
+    text-align: left;
+  }
   .preview-frame .x-tweet--reply .x-tweet__header {
-    display: flex; flex-direction: row; align-items: center;
-    margin-bottom: 4px; gap: 4px; flex-wrap: wrap;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    text-align: left;
   }
-  .preview-frame .x-tweet--reply .x-tweet__display-name { font-size: 15px; }
-  .preview-frame .x-tweet--reply .x-tweet__handle { font-size: 15px; }
-  .preview-frame .x-tweet__dot { color: #536471; font-size: 15px; }
-  .preview-frame .x-tweet--reply .x-tweet__timestamp {
-    font-size: 15px; color: #536471; margin-bottom: 0;
+  .preview-frame .x-tweet--reply .x-tweet__header .x-tweet__display-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #0f1419;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__header .x-tweet__handle {
+    font-weight: 400;
+    font-size: 15px;
+    color: #536471;
+    margin-left: 4px;
+  }
+  .preview-frame .x-tweet__dot {
+    color: #536471;
+    font-size: 15px;
+    margin-left: 4px;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__header .x-tweet__timestamp {
+    font-size: 15px;
+    color: #536471;
+    margin-left: 4px;
   }
   .preview-frame .x-tweet--reply .x-tweet__body {
-    font-size: 15px; margin-bottom: 8px; line-height: 20px;
+    font-size: 15px;
+    line-height: 20px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    word-wrap: break-word;
+    text-align: left;
   }
-  .preview-frame .x-tweet--reply .x-tweet__actions { padding: 2px 0 0 0; }
-  .preview-frame .x-tweet--reply .x-tweet__action { font-size: 13px; padding: 4px 0; }
+  .preview-frame .x-tweet__image {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+  .preview-frame .x-tweet__image img {
+    width: 100%;
+    display: block;
+    border-radius: 32px;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__image {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  .preview-frame .x-tweet--reply .x-tweet__actions {
+    display: table;
+    width: 100%;
+    padding-top: 2px;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    box-sizing: border-box;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__action {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    color: #536471;
+    font-size: 13px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 0;
+    padding-right: 0;
+    white-space: nowrap;
+    width: 25%;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__action:first-child {
+    text-align: left;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__action-group {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+    white-space: nowrap;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 0;
+    padding-right: 0;
+    width: auto;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__action-group .x-tweet__action {
+    display: inline-block;
+    width: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .preview-frame .x-tweet--reply .x-tweet__action-group .x-tweet__action + .x-tweet__action {
+    margin-left: 16px;
+  }
   .preview-frame .x-composer {
-    display: flex; flex-direction: row; align-items: center;
-    padding: 12px 16px; border-bottom: 1px solid #eff3f4; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eff3f4;
+    overflow: hidden;
+    box-sizing: border-box;
+    text-align: left;
   }
   .preview-frame .x-composer__avatar {
-    width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
-    flex-shrink: 0; background-color: #eff3f4;
+    float: left;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #eff3f4;
+    margin-right: 12px;
   }
   .preview-frame .x-composer__avatar img {
-    width: 40px; height: 40px; border-radius: 50%; display: block;
-  }
-  .preview-frame .x-composer__field {
-    flex-grow: 1; font-size: 20px; color: #536471; font-weight: 400;
+    display: block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
   }
   .preview-frame .x-composer__button {
-    background-color: #1d9bf0; color: #ffffff; font-weight: 700;
-    font-size: 15px; border-radius: 9999px; padding: 8px 16px;
-    white-space: nowrap; display: inline-block;
+    float: right;
+    display: inline-block;
+    background-color: #1d9bf0;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 9999px;
+    padding: 8px 16px;
+    white-space: nowrap;
+    text-align: center;
   }
-  .preview-frame .x-thread { border-bottom: 1px solid #eff3f4; }
-  .preview-frame .x-thread .x-tweet--reply { border-bottom: none; padding-bottom: 0; }
-  .preview-frame .x-thread .x-tweet--reply:last-child { padding-bottom: 12px; }
+  .preview-frame .x-composer__field {
+    overflow: hidden;
+    font-size: 20px;
+    color: #536471;
+    font-weight: 400;
+    padding-top: 8px;
+    text-align: left;
+  }
+  .preview-frame .x-thread {
+    border-bottom: 1px solid #eff3f4;
+  }
+  .preview-frame .x-thread .x-tweet--reply {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .preview-frame .x-thread .x-tweet--reply:last-child {
+    padding-bottom: 12px;
+  }
 
   /* ── Scrollbar styling ── */
   .panel::-webkit-scrollbar,
@@ -602,12 +819,12 @@
         <p style="font-size:11px;color:var(--ink-3);font-family:var(--mono);line-height:1.6;margin-bottom:4px;">
           Host 18×18px PNG/JPG icons anywhere (Imgur, GitHub, etc.) and paste the direct URLs here. Leave blank to hide that icon.
         </p>
-        <div class="icon-row"><span class="icon-label">Reply</span>      <input class="icon-input" data-icon="reply"    value="https://images.squidge.org/images/2026/04/23/ICON-comment.png"   oninput="renderPreview()" /></div>
-        <div class="icon-row"><span class="icon-label">Retweet</span>    <input class="icon-input" data-icon="retweet"  value="https://images.squidge.org/images/2026/04/23/ICON-retweet.png"   oninput="renderPreview()" /></div>
-        <div class="icon-row"><span class="icon-label">Like</span>       <input class="icon-input" data-icon="like"     value="https://images.squidge.org/images/2026/04/23/ICON-like.png"      oninput="renderPreview()" /></div>
-        <div class="icon-row"><span class="icon-label">Views</span>      <input class="icon-input" data-icon="views"    value="https://images.squidge.org/images/2026/04/23/ICON-analytics.png" oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Reply</span>      <input class="icon-input" data-icon="reply"    value="https://images.squidge.org/images/2026/04/24/icon-comment.png"   oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Retweet</span>    <input class="icon-input" data-icon="retweet"  value="https://images.squidge.org/images/2026/04/24/icon-retweet.png"   oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Like</span>       <input class="icon-input" data-icon="like"     value="https://images.squidge.org/images/2026/04/24/icon-heart.png"      oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Views</span>      <input class="icon-input" data-icon="views"    value="https://images.squidge.org/images/2026/04/24/icon-views.png" oninput="renderPreview()" /></div>
         <div class="icon-row"><span class="icon-label">Bookmark</span>   <input class="icon-input" data-icon="bookmark" value="https://images.squidge.org/images/2026/04/23/ICON-bookmark.png"  oninput="renderPreview()" /></div>
-        <div class="icon-row"><span class="icon-label">Share</span>      <input class="icon-input" data-icon="share"    value="https://images.squidge.org/images/2026/04/23/ICON-share.png"    oninput="renderPreview()" /></div>
+        <div class="icon-row"><span class="icon-label">Share</span>      <input class="icon-input" data-icon="share"    value="https://images.squidge.org/images/2026/04/24/icon-share.png"    oninput="renderPreview()" /></div>
       </div>
     </div>
 
@@ -665,7 +882,7 @@ function getIcons() {
 function iconTag(icons, name) {
   const url = icons[name];
   if (!url) return '';
-  return `<span class="x-tweet__action-icon"><img src="${esc(url)}" alt="" /></span>`;
+  return `<img class="x-tweet__action-icon" src="${esc(url)}" alt="" />`;
 }
 
 // ── Icon settings toggle ───────────────────────────────────────────────
@@ -686,6 +903,7 @@ function addBlock(type) {
       avatar: '', name: '', handle: '', body: '',
       timestamp: '5:59 PM · Apr 22, 2026',
       replies: '7', reposts: '16', likes: '677', bookmarks: '21', views: '26.9K',
+      hasImage: false, imageUrl: '',
       showComposer: false, composerAvatar: ''
     });
   } else if (type === 'composer') {
@@ -693,7 +911,8 @@ function addBlock(type) {
   } else if (type === 'reply') {
     Object.assign(block, {
       avatar: '', name: '', handle: '', timestamp: 'Apr 22', body: '',
-      replies: '', likes: '', views: '', bookmarks: ''
+      replies: '', likes: '', views: '', bookmarks: '',
+      hasImage: false, imageUrl: ''
     });
   } else if (type === 'thread') {
     Object.assign(block, { replies: [] });
@@ -731,7 +950,8 @@ function addThreadReply(blockId) {
   b.replies.push({
     id: uid(), open: true,
     avatar: '', name: '', handle: '', timestamp: '6h', body: '',
-    replies: '', likes: '', views: '', bookmarks: ''
+    replies: '', likes: '', views: '', bookmarks: '',
+    hasImage: false, imageUrl: ''
   });
   renderPanel();
   renderPreview();
@@ -844,7 +1064,16 @@ function mainFields(b) {
       <input type="text" value="${esc(b.bookmarks)}" oninput="updateField(${b.id},'bookmarks',this.value)" /></div>
     <div class="field"><label>Views</label>
       <input type="text" value="${esc(b.views)}" oninput="updateField(${b.id},'views',this.value)" /></div>
-  </div>`;
+  </div>
+  <div class="field" style="border-top:1px solid var(--rule);padding-top:10px;margin-top:2px;">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+      <input type="checkbox" ${b.hasImage ? 'checked' : ''} onchange="updateField(${b.id},'hasImage',this.checked);renderPanel()" />
+      Include image
+    </label>
+  </div>
+  ${b.hasImage ? `<div class="field"><label>Image URL</label>
+    <input type="text" placeholder="https://…/image.jpg" value="${esc(b.imageUrl)}"
+      oninput="updateField(${b.id},'imageUrl',this.value)" /></div>` : ''}`;
 }
 
 function composerFields(b) {
@@ -885,7 +1114,16 @@ function replyFields(b, bid, isThreadChild) {
       <input type="text" value="${esc(b.likes)}" oninput="${upd('likes')}" /></div>
     <div class="field"><label>Views</label>
       <input type="text" value="${esc(b.views)}" oninput="${upd('views')}" /></div>
-  </div>`;
+  </div>
+  <div class="field" style="border-top:1px solid var(--rule);padding-top:10px;margin-top:2px;">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+      <input type="checkbox" ${b.hasImage ? 'checked' : ''} onchange="${isThreadChild ? `updateThreadReplyField(${bid},${b.id},'hasImage',this.checked)` : `updateField(${bid},'hasImage',this.checked)`};renderPanel()" />
+      Include image
+    </label>
+  </div>
+  ${b.hasImage ? `<div class="field"><label>Image URL</label>
+    <input type="text" placeholder="https://…/image.jpg" value="${esc(b.imageUrl)}"
+      oninput="${isThreadChild ? `updateThreadReplyField(${bid},${b.id},'imageUrl',this.value)` : `updateField(${bid},'imageUrl',this.value)`}" /></div>` : ''}`;
 }
 
 function threadFields(b) {
@@ -935,16 +1173,28 @@ function esc(str) {
   return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function actionBar(icons, counts, compact) {
-  const pad = compact ? '' : '8px 0';
+function actionBarMain(icons, counts) {
   return `
     <div class="x-tweet__actions">
-      <span class="x-tweet__action">${iconTag(icons,'reply')}${counts.replies ? esc(counts.replies) : ''}</span>
-      <span class="x-tweet__action">${iconTag(icons,'retweet')}${counts.reposts ? esc(counts.reposts) : ''}</span>
-      <span class="x-tweet__action">${iconTag(icons,'like')}${counts.likes ? esc(counts.likes) : ''}</span>
-      <span class="x-tweet__action">${iconTag(icons,'views')}${counts.views ? esc(counts.views) : ''}</span>
-      <span class="x-tweet__action">${iconTag(icons,'bookmark')}${counts.bookmarks ? esc(counts.bookmarks) : ''}</span>
-      <span class="x-tweet__action">${iconTag(icons,'share')}</span>
+      <div class="x-tweet__action">${iconTag(icons,'reply')}${counts.replies ? esc(counts.replies) : ''}</div>
+      <div class="x-tweet__action">${iconTag(icons,'retweet')}${counts.reposts ? esc(counts.reposts) : ''}</div>
+      <div class="x-tweet__action">${iconTag(icons,'like')}${counts.likes ? esc(counts.likes) : ''}</div>
+      <div class="x-tweet__action">${iconTag(icons,'bookmark')}${counts.bookmarks ? esc(counts.bookmarks) : ''}</div>
+      <div class="x-tweet__action">${iconTag(icons,'share')}</div>
+    </div>`;
+}
+
+function actionBarReply(icons, counts) {
+  return `
+    <div class="x-tweet__actions">
+      <div class="x-tweet__action">${iconTag(icons,'reply')}${counts.replies ? esc(counts.replies) : ''}</div>
+      <div class="x-tweet__action">${iconTag(icons,'retweet')}${counts.reposts ? esc(counts.reposts) : ''}</div>
+      <div class="x-tweet__action">${iconTag(icons,'like')}${counts.likes ? esc(counts.likes) : ''}</div>
+      <div class="x-tweet__action">${iconTag(icons,'views')}${counts.views ? esc(counts.views) : ''}</div>
+      <div class="x-tweet__action-group">
+        <div class="x-tweet__action">${iconTag(icons,'bookmark')}${counts.bookmarks ? esc(counts.bookmarks) : ''}</div>
+        <div class="x-tweet__action">${iconTag(icons,'share')}</div>
+      </div>
     </div>`;
 }
 
@@ -957,14 +1207,17 @@ function generateMainTweet(b, icons) {
   <div class="x-tweet__header">
     <div class="x-tweet__avatar">${b.avatar ? `<img src="${esc(b.avatar)}" alt="${esc(b.name)} avatar" />` : ''}</div>
     <div class="x-tweet__identity">
-      <span class="x-tweet__display-name">${esc(b.name)}</span>
-      <span class="x-tweet__handle">${esc(b.handle)}</span>
+      <p class="x-tweet__display-name">${esc(b.name)}</p>
+      <p class="x-tweet__handle">${esc(b.handle)}</p>
     </div>
+    <div style="clear:both;"></div>
   </div>
   <div class="x-tweet__body">${esc(b.body)}</div>
+  ${b.hasImage && b.imageUrl ? `<div class="x-tweet__image"><img src="${esc(b.imageUrl)}" alt="" /></div>` : ''}
   <div class="x-tweet__timestamp">${timestampLine}</div>
   <div class="x-tweet__divider"></div>
-  ${actionBar(icons, b, false)}
+  ${actionBarMain(icons, b)}
+  <div style="clear:both;"></div>
 </div>`;
 }
 
@@ -972,8 +1225,9 @@ function generateComposer(b) {
   return `
 <div class="x-composer">
   <div class="x-composer__avatar">${b.avatar ? `<img src="${esc(b.avatar)}" alt="your avatar" />` : ''}</div>
-  <span class="x-composer__field">Post your reply</span>
-  <span class="x-composer__button">Reply</span>
+  <div class="x-composer__button">Reply</div>
+  <div class="x-composer__field">Post your reply</div>
+  <div style="clear:both;"></div>
 </div>`;
 }
 
@@ -985,15 +1239,18 @@ function generateReply(r, icons, hasThreadLine) {
     ${hasThreadLine ? '<div class="x-tweet__thread-line"></div>' : ''}
   </div>
   <div class="x-tweet__right">
-    <div class="x-tweet__header">
+    <p class="x-tweet__header">
       <span class="x-tweet__display-name">${esc(r.name)}</span>
       <span class="x-tweet__handle">${esc(r.handle)}</span>
       <span class="x-tweet__dot">·</span>
       <span class="x-tweet__timestamp">${esc(r.timestamp)}</span>
-    </div>
+    </p>
     <div class="x-tweet__body">${esc(r.body)}</div>
-    ${actionBar(icons, r, true)}
+    ${r.hasImage && r.imageUrl ? `<div class="x-tweet__image"><img src="${esc(r.imageUrl)}" alt="" /></div>` : ''}
+    ${actionBarReply(icons, r)}
+    <div style="clear:both;"></div>
   </div>
+  <div style="clear:both;"></div>
 </div>`;
 }
 
